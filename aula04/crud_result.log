@@ -1,0 +1,1 @@
+{"id":3,"placa":"AAA-1111","montadora":"Scania","modelo":"R450","status":"DISPONIVEL"}{"id":4,"placa":"BBB-2222","montadora":"Volvo","modelo":"FH","status":"DISPONIVEL"}{"mensagem":"Veículo atualizado com sucesso.","veiculo":{"id":1,"placa":"AAA-1111","montadora":"Scania","modelo":"R450","status":"EM_ROTA"}}{"mensagem":"Veiculo ID 2 removido com sucesso."}

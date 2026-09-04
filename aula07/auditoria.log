@@ -1,0 +1,52 @@
+==========================================
+ AUDITORIA COMPLETA DE FROTAS - BINÁRIO TECH
+ Data do Teste: Mon Aug 17 11:57:11 PM UTC 2026
+==========================================
+
+
+[1] Auditando Telemetria Scania...
+{
+  "montadora": "Scania",
+  "dados": [
+    {
+      "id": 1,
+      "modelo": "R450",
+      "vin": "9BS123456789",
+      "temperatura_motor": 88,
+      "status": "OK"
+    },
+    {
+      "id": 2,
+      "modelo": "S500",
+      "vin": "9BS987654321",
+      "temperatura_motor": 102,
+      "status": "ALERTA_AQUECIMENTO"
+    }
+  ]
+}
+
+------------------------------------------
+
+[2] Auditando Telemetria Mercedes-Benz...
+{
+  "montadora": "Mercedes-Benz",
+  "dados": [
+    {
+      "id": 1,
+      "modelo": "Actros",
+      "vin": "MB123456789",
+      "temperatura_motor": 90,
+      "status": "OK"
+    },
+    {
+      "id": 2,
+      "modelo": "Atego",
+      "vin": "MB987654321",
+      "temperatura_motor": 98,
+      "status": "ALERTA_AQUECIMENTO"
+    }
+  ]
+}
+
+------------------------------------------
+
