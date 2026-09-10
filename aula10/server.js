@@ -4,7 +4,7 @@ const frotasRoutes = require('./src/routes/frotaRoutes');
 const tratarErros = require('./src/middlewares/tratarErros');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3222;
 
 app.use(cors());
 app.use(express.json());

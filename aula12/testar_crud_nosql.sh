@@ -4,7 +4,7 @@ echo " AUDITORIA DE CRUD E SUBDOCUMENTOS NOSQL - AULA 12"
 echo "===================================================="
 
 echo -e "\n[1] Registrando Manutencao com subdocumentos de Pecas..."
-RESP=$(curl -s -X POST http://localhost:3000/api/v1/manutencoes \
+RESP=$(curl -s -X POST http://localhost:3222/api/v1/manutencoes \
   -H "Content-Type: application/json" \
   -d '{
     "veiculoPlaca": "SCA-2026",

@@ -6,7 +6,7 @@ const authMiddleware = require('./middlewares/auth');
 const motoristasRouter = require('./routes/motoristas');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3222;
 
 // Middlewares Globais
 app.use(cors());
