@@ -1,0 +1,18 @@
+const express = require('express');
+
+const router = express.Router();
+
+const provaController = require('../controllers/provaController');
+const validarJWT = require('../middlewares/validarJWT');
+
+router.post('/register', provaController.registrar);
+
+router.post('/login', provaController.login);
+
+router.get(
+  '/relatorio',
+  validarJWT,
+  provaController.relatorio
+);
+
+module.exports = router;
