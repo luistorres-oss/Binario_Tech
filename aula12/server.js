@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const conectarBanco = require ('./src/config/database');
+const conectarBanco = require('./src/config/database');
 const manutencaoRoutes = require('./src/routes/manutencaoRoutes');
 
 const app = express();

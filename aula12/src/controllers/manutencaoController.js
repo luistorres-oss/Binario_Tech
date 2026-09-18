@@ -1,7 +1,6 @@
 const Manutencao = require('../models/Manutencao');
 
 const manutencaoController = {
-  // Criar Registro com Subdocumentos
   criar: async (req, res) => {
     try {
       const novaManutencao = await Manutencao.create(req.body);
@@ -11,19 +10,14 @@ const manutencaoController = {
     }
   },
 
-  // Listar com Filtro Avançado ($gte em Custo e Status)
   listarComFiltros: async (req, res) => {
     try {
-      const { minCusto, status } = req.query;
+      const { minCusto, status, placa } = req.query;
       let query = {};
 
-      if (minCusto) {
-        query.custoTotal = { $gte: Number(minCusto) };
-      }
-
-      if (status) {
-        query.status = status;
-      }
+      if (minCusto) query.custoTotal = { $gte: Number(minCusto) };
+      if (status) query.status = status;
+      if (placa) query.veiculoPlaca = { $regex: placa, $options: 'i' };
 
       const resultados = await Manutencao.find(query).sort({ createdAt: -1 });
       res.status(200).json(resultados);
@@ -32,7 +26,27 @@ const manutencaoController = {
     }
   },
 
-  // Atualizar Status por ID
+  adicionarPeca: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const novaPeca = req.body;
+
+      const atualizado = await Manutencao.findByIdAndUpdate(
+        id,
+        { $push: { pecasSubstituidas: novaPeca } },
+        { new: true, runValidators: true }
+      );
+
+      if (!atualizado) {
+        return res.status(404).json({ erro: "Manutenção não encontrada." });
+      }
+
+      res.status(200).json(atualizado);
+    } catch (erro) {
+      res.status(400).json({ erro: "Erro ao adicionar peça.", detalhe: erro.message });
+    }
+  },
+
   atualizarStatus: async (req, res) => {
     try {
       const { id } = req.params;
@@ -54,7 +68,6 @@ const manutencaoController = {
     }
   },
 
-  // Deletar Registro por ID
   excluir: async (req, res) => {
     try {
       const { id } = req.params;
@@ -67,25 +80,6 @@ const manutencaoController = {
       res.status(200).json({ mensagem: "Registro de manutenção excluído com sucesso!" });
     } catch (erro) {
       res.status(500).json({ erro: "Erro ao excluir registro." });
-    }
-  },
-
-  // Buscar por placa (Busca Parcial e Case-Insensitive com $regex)
-  buscarPorPlaca: async (req, res) => {
-    try {
-      const { placa } = req.params;
-
-      const resultados = await Manutencao.find({
-        veiculoPlaca: { $regex: placa, $options: 'i' }
-      });
-
-      if (resultados.length === 0) {
-        return res.status(404).json({ mensagem: "Nenhuma manutenção encontrada para esta placa." });
-      }
-
-      res.status(200).json(resultados);
-    } catch (erro) {
-      res.status(500).json({ erro: "Erro ao buscar por placa.", detalhe: erro.message });
     }
   }
 };

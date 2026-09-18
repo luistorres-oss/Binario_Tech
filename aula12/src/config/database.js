@@ -12,4 +12,3 @@ const conectarBanco = async () => {
 };
 
 module.exports = conectarBanco;
-
