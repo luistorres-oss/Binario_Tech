@@ -1,168 +1,144 @@
 # Binario_Tech
 Binario Tech é o projeto da aula de programaçao back-end
 
-Aula 03 - CLI, JSON, npm e Bash
+# Aula 03 — CLI, JSON, npm e Bash
 
-Curso
+## 1. Objetivos da aula
 
-Programação Back-End 1 (PBE1) - Consultoria Binário Tech
+Nesta aula foram trabalhados os seguintes assuntos:
 
-Data: 31/07/2026
-Unidade: 1 - Ambiente de Desenvolvimento Web
-Porta utilizada no projeto: "3222"
-
----
-
-Objetivo da aula
-
-Nesta aula foram utilizadas ferramentas de linha de comando para testar uma API, trabalhar com arquivos JSON e automatizar testes.
-
-As principais ferramentas utilizadas foram:
-
-- cURL → fazer requisições HTTP.
-- HTTPie → fazer requisições HTTP de uma forma simples.
-- jq → ler, organizar e filtrar dados JSON.
-- npm → executar e gerenciar o projeto Node.js.
-- Bash → criar e executar scripts.
-- ps, grep e kill → localizar e encerrar processos.
-
-A API foi desenvolvida utilizando Node.js e Express.
+* Utilizar `curl` para fazer requisições HTTP.
+* Utilizar `httpie` para testar APIs.
+* Utilizar `jq` para visualizar e filtrar dados JSON.
+* Diferenciar `apt` e `npm`.
+* Criar uma API simples utilizando Node.js e Express.
+* Criar scripts Bash para automatizar testes.
+* Trabalhar com processos do Node.js usando `ps` e `kill`.
+* Salvar resultados de comandos em arquivos de log.
 
 ---
 
-Exercício 01 - cURL + jq
+# 2. Preparação do ambiente
 
-O que o exercício pede?
+Primeiro, entre na pasta do projeto:
 
-Fazer uma requisição GET para a rota da Scania e mostrar somente o campo "modelo".
+```bash
+cd ~/curso-pbe1/binario_tech
+```
 
-O que foi utilizado?
+Entre na pasta da Aula 03:
 
-- "curl" → acessa a API.
-- "jq" → seleciona somente o campo "modelo".
+```bash
+cd aula03
+```
 
-Comando utilizado
+Caso a pasta ainda não exista:
 
-curl -s http://localhost:3222/api/v1/scania | jq '.modelo'
+```bash
+mkdir -p aula03
+cd aula03
+```
 
-Explicação do comando
+Inicialize o projeto Node.js:
 
-curl
+```bash
+npm init -y
+```
 
-Faz uma requisição para a API.
+Instale o Express:
 
--s
+```bash
+npm install express
+```
 
-Deixa a saída do "curl" mais limpa.
+Instale o `jq` e o `httpie`:
 
-http://localhost:3222/api/v1/scania
+```bash
+sudo apt-get update
+sudo apt-get install -y jq httpie
+```
 
-É a rota da Scania.
+### Diferença entre apt e npm
 
-|
+`apt` é utilizado para instalar programas no sistema operacional.
 
-Passa o resultado do "curl" para o "jq".
+Exemplo:
 
-jq '.modelo'
+```bash
+sudo apt-get install jq
+```
 
-Mostra somente o valor do campo "modelo".
+`npm` é utilizado para instalar pacotes e dependências de projetos Node.js.
 
-Resultado esperado
+Exemplo:
 
-"R450"
-
----
-
-Exercício 02 - HTTPie + arquivo JSON
-
-O que o exercício pede?
-
-Fazer uma requisição para a rota da Mercedes usando HTTPie e salvar o resultado no arquivo "mercedes.json".
-
-O que foi utilizado?
-
-- "http" → comando do HTTPie.
-- ">" → direciona o resultado para um arquivo.
-- "mercedes.json" → arquivo onde a resposta será salva.
-
-Comando utilizado
-
-http http://localhost:3222/api/v1/mercedes > mercedes.json
-
-Explicação
-
-http
-
-É o comando do HTTPie para fazer a requisição.
-
-http://localhost:3222/api/v1/mercedes
-
-É a rota da Mercedes.
-
->
-
-Faz com que a resposta seja salva em um arquivo.
-
-mercedes.json
-
-É o arquivo que recebe os dados.
-
-Para conferir o arquivo
-
-cat mercedes.json
+```bash
+npm install express
+```
 
 ---
 
-Exercício 03 - jq + arquivo JSON
+# 3. Criando a API de Telemetria
 
-O que o exercício pede?
+## Arquivo utilizado
 
-Ler o arquivo "mercedes.json" e mostrar somente o valor do campo "status".
+O arquivo principal será:
 
-O que foi utilizado?
+```text
+aula03/telemetria.js
+```
 
-- "jq" → filtrar o JSON.
-- "mercedes.json" → arquivo criado no exercício anterior.
+Para criar ou editar o arquivo:
 
-Comando utilizado
-
-jq '.status' mercedes.json
-
-Resultado esperado
-
-"OK"
-
-Explicação
-
-Neste exercício não é necessário usar "curl" ou "http", porque os dados já estão salvos no arquivo "mercedes.json".
-
-O "jq '.status'" procura dentro do JSON somente o campo "status".
-
----
-
-Exercício 04 - Nova rota da Volvo
-
-O que o exercício pede?
-
-Editar o arquivo "telemetria.js" e criar uma nova rota:
-
-/api/v1/volvo
-
-A rota deve retornar os dados do modelo FH 540.
-
-O que foi utilizado?
-
-- "nano" → editar o arquivo.
-- Express → criar a nova rota.
-- "curl" → testar a rota.
-- "jq" → organizar o resultado.
-
-Abrir o arquivo
-
+```bash
 nano telemetria.js
+```
 
-Rota adicionada
+Cole o seguinte código:
 
+```javascript
+const express = require('express');
+
+const app = express();
+
+const PORT = 3222;
+
+app.use(express.json());
+
+// Rota Scania
+app.get('/api/v1/scania', (req, res) => {
+    res.json({
+        montadora: "Scania",
+        modelo: "R450",
+        status: "OK",
+        conexao: true,
+        velocidade_media: 82
+    });
+});
+
+// Rota Mercedes-Benz
+app.get('/api/v1/mercedes', (req, res) => {
+    res.json({
+        montadora: "Mercedes-Benz",
+        modelo: "Actros",
+        status: "OK",
+        conexao: true,
+        velocidade_media: 78
+    });
+});
+
+// Rota Volkswagen
+app.get('/api/v1/vw', (req, res) => {
+    res.json({
+        montadora: "Volkswagen",
+        modelo: "Delivery",
+        status: "ALERTA",
+        conexao: false,
+        velocidade_media: 0
+    });
+});
+
+// Rota Volvo
 app.get('/api/v1/volvo', (req, res) => {
     res.json({
         montadora: "Volvo",
@@ -173,193 +149,633 @@ app.get('/api/v1/volvo', (req, res) => {
     });
 });
 
-Depois de salvar:
+app.listen(PORT, () => {
+    console.log(
+        `[Binario Tech] Servidor de Telemetria rodando em http://localhost:${PORT}`
+    );
+});
+```
 
-Ctrl + O → Enter → Ctrl + X
+Para salvar no `nano`:
 
-Iniciar novamente o servidor
-
-npm start
-
-Testar a nova rota
-
-curl -s http://localhost:3222/api/v1/volvo | jq .
-
-Explicação
-
-Primeiro foi editado o arquivo da API para adicionar a rota da Volvo. Depois o servidor foi reiniciado e a rota foi testada usando "curl" e "jq".
+```text
+Ctrl + O
+Enter
+Ctrl + X
+```
 
 ---
 
-Exercício 05 - npm start
+# 4. Executando o servidor
 
-O que o exercício pede?
+Execute:
 
-Configurar o "package.json" para que a aplicação possa ser iniciada utilizando:
-
-npm start
-
-O que foi utilizado?
-
-- "package.json" → arquivo de configuração do projeto.
-- "npm" → executa o script.
-- "node" → executa o arquivo "telemetria.js".
-
-Configuração
-
-No "package.json":
-
-"scripts": {
-    "start": "node telemetria.js"
-}
-
-Executar
-
-npm start
-
-Resultado
-
-[Binario Tech] Servidor de Telemetria rodando em http://localhost:3222
-
-Explicação
-
-O "npm start" executa o comando definido dentro de ""scripts"" no "package.json".
-
-Neste caso:
-
-npm start
-     ↓
+```bash
 node telemetria.js
-     ↓
-servidor iniciado na porta 3222
+```
+
+O terminal deverá mostrar algo parecido com:
+
+```text
+[Binario Tech] Servidor de Telemetria rodando em http://localhost:3222
+```
+
+Se quiser deixar o servidor rodando em segundo plano:
+
+```bash
+node telemetria.js &
+```
 
 ---
 
-Exercício 06 - Criar relatório de log
+# 5. Criando o script Bash
 
-O que o exercício pede?
+## Arquivo
 
-Executar o script "testar_telemetria.sh" e salvar o resultado em um arquivo chamado "relatorio.log".
+O arquivo será:
 
-O que foi utilizado?
+```text
+aula03/testar_telemetria.sh
+```
 
-- Bash → executar o script.
-- ">" → direcionar a saída.
-- "relatorio.log" → armazenar o resultado.
+Crie o arquivo:
 
-Comando utilizado
+```bash
+nano testar_telemetria.sh
+```
 
-./testar_telemetria.sh > relatorio.log
+Cole:
 
-Para visualizar o relatório
+```bash
+#!/bin/bash
 
-cat relatorio.log
+echo "========================================="
+echo "  AUDITORIA DE TELEMETRIA - BINARIO TECH "
+echo "  Data/Hora: $(date)"
+echo "========================================="
 
-Explicação
+echo -e "\n[1] Testando Rota Scania..."
+curl -s http://localhost:3222/api/v1/scania | jq .
 
-O script normalmente mostra os resultados no terminal.
+echo -e "\n[2] Testando Rota Mercedes-Benz..."
+curl -s http://localhost:3222/api/v1/mercedes | jq .
 
-Com o símbolo ">", o resultado deixa de ser mostrado somente na tela e passa a ser salvo no arquivo:
+echo -e "\n[3] Testando Rota Volkswagen..."
+curl -s http://localhost:3222/api/v1/vw | jq .
 
+echo -e "\n-----------------------------------------"
+echo "Auditoria finalizada com sucesso!"
+```
+
+Salve:
+
+```text
+Ctrl + O
+Enter
+Ctrl + X
+```
+
+Dê permissão de execução:
+
+```bash
+chmod +x testar_telemetria.sh
+```
+
+Execute:
+
+```bash
+./testar_telemetria.sh
+```
+
+---
+
+# 6. Exercício 01 — Utilizando curl e jq
+
+## Objetivo
+
+Fazer uma requisição para a rota da Scania e mostrar somente o campo `modelo`.
+
+### Comando:
+
+```bash
+curl -s http://localhost:3222/api/v1/scania | jq '.modelo'
+```
+
+### Resultado esperado:
+
+```text
+"R450"
+```
+
+### O que foi utilizado?
+
+`curl` faz a requisição para a API.
+
+`jq '.modelo'` pega somente o campo `modelo`.
+
+---
+
+# 7. Exercício 02 — Utilizando HTTPie
+
+## Objetivo
+
+Fazer uma requisição para a rota Mercedes-Benz usando `httpie` e salvar o resultado em `mercedes.json`.
+
+### Comando:
+
+```bash
+http http://localhost:3222/api/v1/mercedes > mercedes.json
+```
+
+O arquivo será criado:
+
+```text
+mercedes.json
+```
+
+Para conferir:
+
+```bash
+cat mercedes.json
+```
+
+Ou:
+
+```bash
+cat mercedes.json | jq .
+```
+
+---
+
+# 8. Exercício 03 — Filtrando o arquivo JSON
+
+## Objetivo
+
+Ler o arquivo `mercedes.json` e mostrar somente o campo `status`.
+
+### Comando:
+
+```bash
+jq '.status' mercedes.json
+```
+
+### Resultado esperado:
+
+```text
+"OK"
+```
+
+Aqui o `jq` está lendo diretamente o arquivo JSON.
+
+---
+
+# 9. Exercício 04 — Criando a rota Volvo
+
+## Objetivo
+
+Adicionar uma nova rota:
+
+```text
+/api/v1/volvo
+```
+
+O modelo será:
+
+```text
+FH 540
+```
+
+## Arquivo alterado
+
+```text
+telemetria.js
+```
+
+Adicione:
+
+```javascript
+app.get('/api/v1/volvo', (req, res) => {
+    res.json({
+        montadora: "Volvo",
+        modelo: "FH 540",
+        status: "ALERTA",
+        conexao: false,
+        velocidade_media: 0
+    });
+});
+```
+
+Depois salve o arquivo.
+
+### Reinicie o servidor
+
+Primeiro encontre o processo:
+
+```bash
+ps aux | grep node
+```
+
+Encerre o processo usando o PID encontrado:
+
+```bash
+kill -9 PID
+```
+
+Exemplo:
+
+```bash
+kill -9 1234
+```
+
+Depois execute novamente:
+
+```bash
+node telemetria.js
+```
+
+### Teste a nova rota:
+
+```bash
+curl -s http://localhost:3222/api/v1/volvo | jq .
+```
+
+Também pode testar somente o modelo:
+
+```bash
+curl -s http://localhost:3222/api/v1/volvo | jq '.modelo'
+```
+
+Resultado:
+
+```text
+"FH 540"
+```
+
+---
+
+# 10. Exercício 05 — Criando o comando npm start
+
+## Objetivo
+
+Adicionar um comando para iniciar a aplicação usando:
+
+```bash
+npm start
+```
+
+## Arquivo alterado
+
+```text
+package.json
+```
+
+Abra:
+
+```bash
+nano package.json
+```
+
+Procure:
+
+```json
+"scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1"
+}
+```
+
+Altere para:
+
+```json
+"scripts": {
+  "start": "node telemetria.js"
+}
+```
+
+O `package.json` deverá ficar parecido com:
+
+```json
+{
+  "name": "aula03",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node telemetria.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
+```
+
+Salve:
+
+```text
+Ctrl + O
+Enter
+Ctrl + X
+```
+
+### Teste:
+
+```bash
+npm start
+```
+
+Resultado esperado:
+
+```text
+[Binario Tech] Servidor de Telemetria rodando em http://localhost:3222
+```
+
+---
+
+# 11. Exercício 06 — Criando um arquivo de log
+
+## Objetivo
+
+Executar o script de auditoria e salvar toda a saída em:
+
+```text
 relatorio.log
+```
+
+### Comando:
+
+```bash
+./testar_telemetria.sh > relatorio.log
+```
+
+Para visualizar:
+
+```bash
+cat relatorio.log
+```
+
+Também podemos usar `tee` para mostrar no terminal e salvar ao mesmo tempo:
+
+```bash
+./testar_telemetria.sh | tee relatorio.log
+```
+
+O arquivo criado será:
+
+```text
+relatorio.log
+```
 
 ---
 
-Exercício 07 - cURL + jq com dois campos
+# 12. Exercício 07 — Filtrando dois campos com jq
 
-O que o exercício pede?
+## Objetivo
 
-Acessar a rota da Volkswagen e mostrar somente:
+Mostrar somente:
 
-- "montadora"
-- "status"
+```text
+montadora
+status
+```
 
-O que foi utilizado?
+da rota Volkswagen.
 
-- "curl" → acessar a API.
-- "jq" → selecionar os campos desejados.
+### Comando:
 
-Comando utilizado
-
+```bash
 curl -s http://localhost:3222/api/v1/vw | jq '{montadora, status}'
+```
 
-Resultado esperado
+### Resultado esperado:
 
+```json
 {
   "montadora": "Volkswagen",
   "status": "ALERTA"
 }
+```
 
-Explicação
-
-O "curl" pega todos os dados da rota.
-
-O "jq" recebe esses dados e mostra somente os dois campos solicitados.
+Neste exercício usamos apenas uma chamada do `jq` para pegar os dois campos.
 
 ---
 
-Exercício 08 - Encontrar e encerrar o processo Node.js
+# 13. Exercício 08 — Encontrando e encerrando o processo Node.js
 
-O que o exercício pede?
+## Objetivo
 
-Localizar o processo Node.js em execução e encerrá-lo usando o PID.
+Localizar o processo Node.js que está executando a API.
 
-O que foi utilizado?
+### Primeiro:
 
-- "ps aux" → mostra os processos em execução.
-- "grep node" → procura os processos relacionados ao Node.js.
-- "kill -9" → encerra o processo.
-
-Primeiro comando
-
+```bash
 ps aux | grep node
+```
 
-Esse comando mostra os processos relacionados ao Node.js.
+Será mostrado algo parecido com:
 
-Será possível encontrar algo parecido com:
-
-luis_torres   1234   ... node telemetria.js
+```text
+user    1234  ... node telemetria.js
+```
 
 O número:
 
+```text
 1234
+```
 
 é o PID do processo.
 
-Encerrar o processo
+### Encerrar o processo:
 
+```bash
 kill -9 1234
+```
 
-O número deve ser substituído pelo PID que apareceu no seu terminal.
+Troque `1234` pelo PID que apareceu no seu terminal.
 
-Explicação
+### Conferir novamente:
 
-O PID é o número que identifica um processo no sistema.
+```bash
+ps aux | grep node
+```
 
-O comando "kill -9" encerra esse processo.
-
----
-
-Resumo dos exercícios
-
-Exercício| Ferramentas utilizadas| Objetivo
-01| "curl" + "jq"| Mostrar o modelo da Scania
-02| "http" + ">"| Salvar resposta da Mercedes
-03| "jq"| Filtrar o status da Mercedes
-04| "nano" + Express + "curl" + "jq"| Criar e testar a rota Volvo
-05| "npm" + "package.json"| Iniciar a API com "npm start"
-06| Bash + ">"| Criar o relatório "relatorio.log"
-07| "curl" + "jq"| Mostrar montadora e status da VW
-08| "ps" + "grep" + "kill"| Localizar e encerrar o Node.js
+O processo `telemetria.js` deverá ter sido encerrado.
 
 ---
 
-Conclusão
+# 14. Resumo dos principais comandos
 
-Nesta aula, aprendi a utilizar ferramentas de linha de comando para trabalhar com uma API.
+## Entrar na aula
 
-Aprendi a fazer requisições usando "curl" e HTTPie, filtrar informações JSON usando "jq", configurar o projeto para utilizar "npm start", criar scripts Bash e salvar seus resultados em arquivos de log.
+```bash
+cd ~/curso-pbe1/binario_tech/aula03
+```
 
-Também aprendi a localizar um processo Node.js utilizando "ps" e "grep" e encerrá-lo através do seu PID com o comando "kill".
+## Iniciar a API
 
-A porta utilizada no projeto foi a 3222.
+```bash
+node telemetria.js
+```
+
+ou:
+
+```bash
+npm start
+```
+
+## Testar Scania
+
+```bash
+curl -s http://localhost:3222/api/v1/scania | jq .
+```
+
+## Mostrar somente o modelo da Scania
+
+```bash
+curl -s http://localhost:3222/api/v1/scania | jq '.modelo'
+```
+
+## Testar Mercedes com HTTPie
+
+```bash
+http http://localhost:3222/api/v1/mercedes
+```
+
+## Salvar Mercedes em arquivo
+
+```bash
+http http://localhost:3222/api/v1/mercedes > mercedes.json
+```
+
+## Ler o status do arquivo
+
+```bash
+jq '.status' mercedes.json
+```
+
+## Testar Volkswagen
+
+```bash
+curl -s http://localhost:3222/api/v1/vw | jq .
+```
+
+## Mostrar somente montadora e status
+
+```bash
+curl -s http://localhost:3222/api/v1/vw | jq '{montadora, status}'
+```
+
+## Testar Volvo
+
+```bash
+curl -s http://localhost:3222/api/v1/volvo | jq .
+```
+
+## Executar o script Bash
+
+```bash
+./testar_telemetria.sh
+```
+
+## Salvar auditoria em log
+
+```bash
+./testar_telemetria.sh > relatorio.log
+```
+
+## Mostrar e salvar ao mesmo tempo
+
+```bash
+./testar_telemetria.sh | tee relatorio.log
+```
+
+## Ver processos Node.js
+
+```bash
+ps aux | grep node
+```
+
+## Encerrar processo
+
+```bash
+kill -9 PID
+```
+
+---
+
+# 15. Arquivos criados na Aula 03
+
+Ao final da aula, a pasta deverá conter arquivos parecidos com:
+
+```text
+aula03/
+├── node_modules/
+├── package-lock.json
+├── package.json
+├── telemetria.js
+├── testar_telemetria.sh
+├── mercedes.json
+└── relatorio.log
+```
+
+## Função de cada arquivo
+
+### `telemetria.js`
+
+É o servidor da API de telemetria.
+
+### `testar_telemetria.sh`
+
+É o script Bash utilizado para automatizar os testes das rotas.
+
+### `package.json`
+
+Guarda as informações do projeto e os comandos do npm.
+
+### `package-lock.json`
+
+Registra as versões das dependências instaladas.
+
+### `mercedes.json`
+
+Guarda a resposta da rota Mercedes.
+
+### `relatorio.log`
+
+Guarda o resultado da auditoria executada pelo script.
+
+### `node_modules/`
+
+Contém as dependências instaladas pelo npm, como o Express.
+
+---
+
+# 16. Conclusão
+
+Nesta aula foram praticados comandos de terminal para trabalhar com APIs.
+
+O `curl` foi utilizado para fazer requisições HTTP.
+
+O `httpie` foi utilizado como uma alternativa ao `curl`, apresentando uma sintaxe mais simples para algumas requisições.
+
+O `jq` foi utilizado para trabalhar com os dados JSON, permitindo selecionar somente os campos necessários.
+
+O `npm` foi utilizado para gerenciar as dependências do projeto Node.js.
+
+Também foi criado um script Bash para automatizar os testes das rotas de telemetria.
+
+Por fim, foram utilizados `ps` e `kill` para localizar e encerrar processos Node.js.
+
+A API foi configurada para funcionar na porta:
+
+```text
+3222
+```
+
+Base das rotas:
+
+```text
+http://localhost:3222/api/v1
+```
