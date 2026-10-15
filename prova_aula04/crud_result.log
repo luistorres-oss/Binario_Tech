@@ -1,0 +1,34 @@
+===== INICIO DOS TESTES CRUD =====
+qui 15 out 2026 13:13:37 -03
+Cadastrando o primeiro veiculo...
+{
+  "id": 5,
+  "placa": "VOL-1111",
+  "montadora": "Volvo",
+  "modelo": "FH 540",
+  "status": "DISPONIVEL"
+}
+Cadastrando o segundo veiculo...
+{
+  "id": 6,
+  "placa": "MER-2222",
+  "montadora": "Mercedes-Benz",
+  "modelo": "Actros",
+  "status": "DISPONIVEL"
+}
+Atualizando o primeiro veiculo...
+{
+  "mensagem": "Status atualizado com sucesso!",
+  "veiculo": {
+    "id": 5,
+    "placa": "VOL-1111",
+    "montadora": "Volvo",
+    "modelo": "FH 540",
+    "status": "EM_ROTA"
+  }
+}
+Excluindo o segundo veiculo...
+{
+  "mensagem": "Veiculo ID 6 removido com sucesso."
+}
+===== FIM DOS TESTES CRUD =====

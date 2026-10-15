@@ -2,8 +2,9 @@
   "name": "aula04",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "frota_api.js",
   "scripts": {
+    "start": "node frota_api.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
