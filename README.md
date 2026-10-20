@@ -1316,105 +1316,73 @@ A atividade ajudou a entender como uma API pode ser utilizada para cadastrar, co
 ### 11. O que posso falar na apresentação
 
 Nesta aula, desenvolvi uma API de gerenciamento de frotas utilizando Node.js e Express. Implementei as operações CRUD e aprendi a diferença entre PUT e PATCH. Também fiz testes utilizando cURL, validei os dados enviados e verifiquei os códigos de resposta HTTP. Por último, criei um script Bash para automatizar algumas operações e salvar os resultados em um arquivo de log.
-http://localhost:3222/api/v1
-```
-Aula 05 — Middlewares e Modularização com Express
+# Aula 05 – Middlewares e Modularização com Express
 
-Projeto: Binário Tech
-Tema: Gestão de Telemetria e Manutenção de Frotas
+**Binário Tech – Gestão de Frotas, Motoristas e Manutenções**
 
-1. Objetivos de Aprendizagem
+## 1. Objetivos da aula
 
-Compreender o funcionamento dos middlewares no Express.
+Nesta aula, aprendi sobre o funcionamento dos middlewares no Express e como utilizá-los para organizar e proteger uma API.
 
-Aprender a utilizar req, res e next().
+Os principais objetivos foram:
 
-Organizar as rotas utilizando express.Router().
+- Compreender o funcionamento de `req`, `res` e `next()`.
+- Criar middlewares personalizados para registrar requisições.
+- Implementar autenticação utilizando API Key.
+- Modularizar rotas com `express.Router()`.
+- Validar os dados enviados nas requisições.
+- Configurar o CORS para permitir a comunicação com o Front-End.
+- Tratar erros de rotas inexistentes.
+- Realizar testes utilizando cURL e comandos do Linux.
 
-Implementar logging, autenticação por API Key e validação de dados.
+## 2. Conceitos estudados
 
-Tratar erros com respostas padronizadas em JSON.
+**Middleware:** função executada durante o processamento de uma requisição, podendo verificar dados, registrar informações ou bloquear acessos.
 
-Configurar o CORS para permitir a integração com o Front-End.
+**req:** objeto que contém informações da requisição, como parâmetros, cabeçalhos e corpo.
 
-2. Conteúdo Teórico
+**res:** objeto utilizado para enviar a resposta ao cliente.
 
-2.1. O que é Middleware?
+**next():** permite continuar o processamento da requisição para o próximo middleware ou rota.
 
-Middleware é uma função executada durante o processamento de uma requisição HTTP. Ela pode verificar dados, registrar informações, autenticar usuários e controlar se a requisição continuará.
+**Logging:** registro de informações sobre as requisições realizadas na API.
 
-req: contém os dados da requisição.
+**API Key:** chave enviada no cabeçalho HTTP para controlar o acesso às rotas protegidas.
 
-res: permite enviar a resposta ao cliente.
+**Express Router:** recurso utilizado para separar as rotas em arquivos diferentes.
 
-next(): permite continuar para o próximo middleware ou rota.
+**CORS:** mecanismo que controla as solicitações feitas entre diferentes origens, especialmente pelos navegadores.
 
-2.2. Pilha de Middlewares
+**Status Codes:** códigos que indicam o resultado de uma requisição.
 
-Uma requisição passa por uma sequência de funções até receber uma resposta.
+| Código | Significado |
+|---|---|
+| 200 | Requisição realizada com sucesso |
+| 201 | Recurso criado com sucesso |
+| 400 | Requisição inválida |
+| 401 | Acesso não autorizado |
+| 404 | Endpoint não encontrado |
+| 500 | Erro interno do servidor |
 
-O cliente envia uma requisição.
+## 3. Preparação do projeto
 
-O Express processa os middlewares globais.
+Primeiro, entrei na pasta da aula e preparei o ambiente utilizando os seguintes comandos:
 
-O logger registra os dados da requisição.
-
-O middleware de autenticação verifica a chave.
-
-A rota processa a solicitação.
-
-O servidor devolve a resposta.
-
-Quando ocorre uma falha de autenticação ou validação, a requisição pode ser interrompida com uma resposta de erro.
-
-2.3. Modularização com Express Router
-
-O express.Router() permite separar as rotas em arquivos diferentes, facilitando a organização e a manutenção do projeto.
-
-2.4. CORS
-
-CORS significa Cross-Origin Resource Sharing. É um mecanismo que controla quais origens podem acessar determinados recursos de uma API pelo navegador.
-
-No Express, podemos habilitar o CORS utilizando o pacote cors.
-
-2.5. Autenticação por API Key
-
-A API Key é uma chave enviada pelo cliente no cabeçalho HTTP X-API-KEY. O middleware verifica se a chave recebida corresponde à chave esperada.
-
-2.6. Tratamento de Erros
-
-A API deve retornar códigos HTTP adequados:
-
-200 OK: requisição realizada com sucesso.
-
-201 Created: recurso criado.
-
-400 Bad Request: dados inválidos.
-
-401 Unauthorized: acesso não autorizado.
-
-404 Not Found: rota ou recurso não encontrado.
-
-500 Internal Server Error: erro interno do servidor.
-
-3. Criação do Projeto
-
-Acesse o Google Cloud Shell e execute:
-
-cd ~/binario_tech
-mkdir -p aula05/routes aula05/middlewares
-cd aula05
+```bash
+cd ~/curso-pbe1/binario_tech/aula05
+mkdir -p routes middlewares
 npm init -y
 npm install express cors
+```
 
-A porta utilizada nesta versão será 3222.
+A aplicação foi configurada para utilizar a porta `3222`, seguindo o padrão das outras atividades do projeto Binário Tech.
 
-4. Estrutura do Projeto
+A estrutura utilizada foi:
 
+```text
 aula05/
 ├── app.js
 ├── package.json
-├── README.md
 ├── routes/
 │   ├── motoristas.js
 │   └── manutencoes.js
@@ -1424,13 +1392,23 @@ aula05/
 │   └── validaCnh.js
 ├── teste_seguranca.sh
 └── audit_seguranca.log
+```
 
-5. Implementação dos Middlewares
+## 4. Código dos middlewares
 
-5.1. Middleware de Logging
+### 4.1. Middleware de Logging – logger.js
 
-Crie o arquivo middlewares/logger.js:
+Criei o arquivo `middlewares/logger.js` para registrar as requisições realizadas na API.
 
+Para criar o arquivo:
+
+```bash
+nano middlewares/logger.js
+```
+
+Código utilizado:
+
+```javascript
 function loggerMiddleware(req, res, next) {
     const inicio = Date.now();
     const timestamp = new Date().toISOString();
@@ -1447,20 +1425,35 @@ function loggerMiddleware(req, res, next) {
 }
 
 module.exports = loggerMiddleware;
+```
 
-Explicação: registra o método HTTP, a rota acessada, o status da resposta e o tempo de processamento.
+Explicação do código:
 
-5.2. Middleware de Autenticação
+- `Date.now()` registra o início da requisição.
+- `req.method` informa o método HTTP utilizado.
+- `req.originalUrl` informa o endereço acessado.
+- `res.statusCode` mostra o código de resposta.
+- `res.on('finish')` registra as informações quando a resposta termina.
+- `next()` permite continuar o processamento.
 
-Crie o arquivo middlewares/auth.js:
+### 4.2. Middleware de Autenticação – auth.js
 
+Criei o arquivo `middlewares/auth.js` para proteger as rotas por meio de uma API Key.
+
+```bash
+nano middlewares/auth.js
+```
+
+Código utilizado:
+
+```javascript
 function authMiddleware(req, res, next) {
     const apiKey = req.headers['x-api-key'];
     const CHAVE_VALIDA = "binario-tech-secret-2026";
 
     if (!apiKey || apiKey !== CHAVE_VALIDA) {
         return res.status(401).json({
-            erro: "Acesso nao autorizado. Header 'X-API-KEY' invalido ou ausente."
+            erro: "Acesso nao autorizado. Header X-API-KEY invalido ou ausente."
         });
     }
 
@@ -1468,13 +1461,25 @@ function authMiddleware(req, res, next) {
 }
 
 module.exports = authMiddleware;
+```
 
-Explicação: bloqueia as requisições que não possuem uma chave válida.
+Explicação do código:
 
-5.3. Middleware de Validação de CNH
+- O middleware procura a chave no cabeçalho `X-API-KEY`.
+- Se a chave estiver ausente ou incorreta, retorna HTTP 401.
+- Se a chave estiver correta, chama `next()` e permite continuar.
 
-Crie o arquivo middlewares/validaCnh.js:
+### 4.3. Middleware de Validação da CNH – validaCnh.js
 
+Criei o arquivo `middlewares/validaCnh.js` para verificar se a CNH possui exatamente 11 dígitos numéricos.
+
+```bash
+nano middlewares/validaCnh.js
+```
+
+Código utilizado:
+
+```javascript
 function validaCnh(req, res, next) {
     const { cnh } = req.body;
 
@@ -1488,19 +1493,31 @@ function validaCnh(req, res, next) {
 }
 
 module.exports = validaCnh;
+```
 
-Explicação: verifica se a CNH possui exatamente 11 dígitos numéricos. Se for válida, o next() permite que a requisição continue.
+Explicação do código:
 
-6. Criação das Rotas
+- O middleware recebe a CNH enviada no corpo da requisição.
+- A expressão regular `^\d{11}$` verifica se existem exatamente 11 dígitos.
+- Se a CNH for inválida, retorna HTTP 400.
+- Se for válida, permite continuar para o cadastro.
 
-6.1. Rotas de Motoristas
+## 5. Código das rotas da API
 
-Crie o arquivo routes/motoristas.js:
+### 5.1. Rotas de Motoristas – motoristas.js
 
+Criei o arquivo `routes/motoristas.js` para listar e cadastrar motoristas.
+
+```bash
+nano routes/motoristas.js
+```
+
+Código utilizado:
+
+```javascript
 const express = require('express');
-const validaCnh = require('../middlewares/validaCnh');
-
 const router = express.Router();
+const validaCnh = require('../middlewares/validaCnh');
 
 let motoristas = [
     {
@@ -1519,12 +1536,12 @@ let motoristas = [
     }
 ];
 
-// Listar motoristas
+// GET - Listar motoristas
 router.get('/', (req, res) => {
     res.status(200).json(motoristas);
 });
 
-// Cadastrar motorista
+// POST - Cadastrar motorista
 router.post('/', validaCnh, (req, res) => {
     const { nome, cnh, categoria } = req.body;
 
@@ -1535,7 +1552,9 @@ router.post('/', validaCnh, (req, res) => {
     }
 
     const novoMotorista = {
-        id: motoristas.length + 1,
+        id: motoristas.length
+            ? Math.max(...motoristas.map(m => m.id)) + 1
+            : 1,
         nome,
         cnh,
         categoria,
@@ -1548,13 +1567,27 @@ router.post('/', validaCnh, (req, res) => {
 });
 
 module.exports = router;
+```
 
-Explicação: permite listar e cadastrar motoristas. O cadastro exige uma CNH válida.
+Explicação do código:
 
-6.2. Rotas de Manutenções
+- `express.Router()` cria um roteador separado.
+- O GET lista os motoristas cadastrados.
+- O POST recebe os dados de um novo motorista.
+- O middleware `validaCnh` verifica a CNH antes do cadastro.
+- O status 201 indica que o motorista foi criado.
 
-Crie o arquivo routes/manutencoes.js:
+### 5.2. Rotas de Manutenções – manutencoes.js
 
+Criei o arquivo `routes/manutencoes.js` para listar e cadastrar manutenções dos caminhões.
+
+```bash
+nano routes/manutencoes.js
+```
+
+Código utilizado:
+
+```javascript
 const express = require('express');
 const router = express.Router();
 
@@ -1563,30 +1596,37 @@ let manutencoes = [
         id: 1,
         placa: "ABC-1234",
         descricao: "Troca de oleo",
-        status: "PENDENTE"
+        valor: 350
     }
 ];
 
-// Listar manutencoes
+// GET - Listar manutencoes
 router.get('/', (req, res) => {
     res.status(200).json(manutencoes);
 });
 
-// Cadastrar manutencao
+// POST - Cadastrar manutencao
 router.post('/', (req, res) => {
-    const { placa, descricao } = req.body;
+    const { placa, descricao, valor } = req.body;
 
-    if (!placa || !descricao) {
+    if (
+        !placa ||
+        !descricao ||
+        typeof valor !== 'number' ||
+        valor < 0
+    ) {
         return res.status(400).json({
-            erro: "Placa e descricao sao obrigatorias."
+            erro: "Placa, descricao e valor numerico valido sao obrigatorios."
         });
     }
 
     const novaManutencao = {
-        id: manutencoes.length + 1,
+        id: manutencoes.length
+            ? Math.max(...manutencoes.map(m => m.id)) + 1
+            : 1,
         placa,
         descricao,
-        status: "PENDENTE"
+        valor
     };
 
     manutencoes.push(novaManutencao);
@@ -1595,13 +1635,26 @@ router.post('/', (req, res) => {
 });
 
 module.exports = router;
+```
 
-Explicação: permite listar e cadastrar manutenções de veículos.
+Explicação do código:
 
-7. Criação do Servidor Principal
+- O GET retorna a lista de manutenções.
+- O POST recebe placa, descrição e valor.
+- Os dados são verificados antes do cadastro.
+- O status 201 confirma a criação da manutenção.
 
-Crie o arquivo app.js:
+## 6. Código do servidor principal – app.js
 
+Criei o arquivo `app.js` para configurar o servidor, registrar os middlewares e conectar os roteadores.
+
+```bash
+nano app.js
+```
+
+Código utilizado:
+
+```javascript
 const express = require('express');
 const cors = require('cors');
 
@@ -1628,8 +1681,17 @@ app.get('/api/v1/health', (req, res) => {
 });
 
 // Rotas protegidas
-app.use('/api/v1/motoristas', authMiddleware, motoristasRouter);
-app.use('/api/v1/manutencoes', authMiddleware, manutencoesRouter);
+app.use(
+    '/api/v1/motoristas',
+    authMiddleware,
+    motoristasRouter
+);
+
+app.use(
+    '/api/v1/manutencoes',
+    authMiddleware,
+    manutencoesRouter
+);
 
 // Tratamento de rotas inexistentes
 app.use((req, res) => {
@@ -1643,112 +1705,42 @@ app.listen(PORT, () => {
         `[Binario Tech] Servidor de Middlewares ativo na porta ${PORT}`
     );
 });
+```
 
-Explicação da ordem dos middlewares:
+Explicação do código:
 
-O CORS configura o acesso entre origens.
+- `cors()` configura o CORS para permitir solicitações de diferentes origens.
+- `express.json()` permite receber dados em JSON.
+- `loggerMiddleware` registra as requisições.
+- A rota `/api/v1/health` é pública.
+- As rotas de motoristas e manutenções exigem API Key.
+- O último middleware retorna HTTP 404 quando nenhuma rota corresponde ao endereço solicitado.
 
-O express.json() interpreta os dados enviados em JSON.
+## 7. Executando a API
 
-O logger registra as requisições.
+Para iniciar o servidor, execute:
 
-A rota health fica pública.
-
-Motoristas e manutenções exigem autenticação.
-
-O middleware 404 responde quando uma rota não é encontrada.
-
-8. Execução do Servidor
-
-Execute:
-
+```bash
 node app.js
+```
 
-Resultado esperado:
+A mensagem esperada no terminal é:
 
+```text
 [Binario Tech] Servidor de Middlewares ativo na porta 3222
+```
 
-Mantenha esse terminal aberto enquanto executa os testes em outro terminal.
+Deixei esse terminal aberto e utilizei outro terminal para executar os testes.
 
-9. Testes da API com cURL
+## 8. Testes das rotas
 
-Teste 1 — Verificar a saúde da API
-
-curl -s http://localhost:3222/api/v1/health | jq .
-
-Resposta esperada:
-
-{
-  "status": "ONLINE",
-  "aplicacao": "Binario Tech API v2"
-}
-
-Teste 2 — Listar motoristas sem autenticação
-
-curl -i http://localhost:3222/api/v1/motoristas
-
-Resultado esperado: 401 Unauthorized.
-
-Teste 3 — Listar motoristas com autenticação
-
-curl -s -H "X-API-KEY: binario-tech-secret-2026" \
-http://localhost:3222/api/v1/motoristas | jq .
-
-Resultado esperado: lista dos motoristas cadastrados.
-
-Teste 4 — Cadastrar um motorista
-
-curl -i -X POST http://localhost:3222/api/v1/motoristas \
--H "X-API-KEY: binario-tech-secret-2026" \
--H "Content-Type: application/json" \
--d '{"nome":"Roberto Souza","cnh":"55544433322","categoria":"E"}'
-
-Resultado esperado: 201 Created.
-
-Teste 5 — Listar manutenções
-
-curl -s -H "X-API-KEY: binario-tech-secret-2026" \
-http://localhost:3222/api/v1/manutencoes | jq .
-
-Resultado esperado: lista de manutenções cadastradas.
-
-Teste 6 — Cadastrar uma manutenção
-
-curl -i -X POST http://localhost:3222/api/v1/manutencoes \
--H "X-API-KEY: binario-tech-secret-2026" \
--H "Content-Type: application/json" \
--d '{"placa":"ABC-1234","descricao":"Revisao dos freios"}'
-
-Resultado esperado: 201 Created.
-
-Teste 7 — Testar CNH inválida
-
-curl -i -X POST http://localhost:3222/api/v1/motoristas \
--H "X-API-KEY: binario-tech-secret-2026" \
--H "Content-Type: application/json" \
--d '{"nome":"Roberto Souza","cnh":"123","categoria":"E"}'
-
-Resultado esperado: 400 Bad Request.
-
-Teste 8 — Testar uma rota inexistente
-
-curl -i http://localhost:3222/api/v1/clientes
-
-Resultado esperado: 404 Not Found.
-
-10. Lista de Exercícios Resolvida
-
-### Exercício 01 — Testar o Middleware de Logging
-
-**Objetivo:** verificar se o middleware registra as requisições realizadas na API.
-
-Execute no terminal:
+### Teste 1 – Health Check
 
 ```bash
 curl -s http://localhost:3222/api/v1/health | jq .
 ```
 
-**Resultado esperado:**
+Resultado esperado:
 
 ```json
 {
@@ -1757,129 +1749,112 @@ curl -s http://localhost:3222/api/v1/health | jq .
 }
 ```
 
-No terminal onde o servidor está rodando, deverá aparecer um log semelhante a este:
-
-```text
-[LOG 2026-10-20T19:00:00.000Z] GET /api/v1/health - Status: 200 (2ms)
-```
-
-O horário e o tempo de resposta podem variar.
-
-**Explicação:** o middleware registra o método HTTP, a rota acessada, o status da resposta e o tempo gasto no processamento.
-
----
-
-### Exercício 02 — Criar as Rotas de Manutenções
-
-**Objetivo:** criar um arquivo para listar e cadastrar manutenções.
-
-Crie o arquivo:
+### Teste 2 – Listar motoristas sem API Key
 
 ```bash
-nano routes/manutencoes.js
+curl -i http://localhost:3222/api/v1/motoristas
 ```
 
-Cole o código:
+Resultado esperado: HTTP 401 Unauthorized.
 
-```javascript
-const express = require('express');
-const router = express.Router();
-
-let manutencoes = [
-    {
-        id: 1,
-        placa: "ABC-1234",
-        descricao: "Troca de oleo",
-        status: "PENDENTE"
-    }
-];
-
-// Listar manutencoes
-router.get('/', (req, res) => {
-    res.status(200).json(manutencoes);
-});
-
-// Cadastrar manutencao
-router.post('/', (req, res) => {
-    const { placa, descricao } = req.body;
-
-    if (!placa || !descricao) {
-        return res.status(400).json({
-            erro: "Placa e descricao sao obrigatorias."
-        });
-    }
-
-    const novaManutencao = {
-        id: manutencoes.length + 1,
-        placa,
-        descricao,
-        status: "PENDENTE"
-    };
-
-    manutencoes.push(novaManutencao);
-
-    res.status(201).json(novaManutencao);
-});
-
-module.exports = router;
-```
-
-Salve com `Ctrl + O`, `Enter` e `Ctrl + X`.
-
-**Explicação:** o `GET` lista as manutenções e o `POST` cadastra uma nova manutenção. Os dados ficam armazenados na memória enquanto o servidor estiver em execução.
-
----
-
-### Exercício 03 — Registrar as Rotas no Servidor
-
-**Objetivo:** adicionar as rotas de manutenções ao `app.js`, protegendo-as com autenticação.
-
-Abra o arquivo:
+### Teste 3 – Listar motoristas com API Key
 
 ```bash
-nano app.js
+curl -s \
+-H "X-API-KEY: binario-tech-secret-2026" \
+http://localhost:3222/api/v1/motoristas | jq .
 ```
 
-Adicione junto aos outros `require`:
+Resultado esperado: lista dos motoristas cadastrados.
 
-```javascript
-const manutencoesRouter = require('./routes/manutencoes');
-```
-
-Depois, junto ao registro das rotas protegidas, adicione:
-
-```javascript
-app.use('/api/v1/manutencoes', authMiddleware, manutencoesRouter);
-```
-
-Confira se a porta está configurada corretamente:
-
-```javascript
-const PORT = 3222;
-```
-
-**Teste para listar manutenções:**
+### Teste 4 – Cadastrar motorista
 
 ```bash
-curl -s -H "X-API-KEY: binario-tech-secret-2026" \
+curl -i -X POST http://localhost:3222/api/v1/motoristas \
+-H "X-API-KEY: binario-tech-secret-2026" \
+-H "Content-Type: application/json" \
+-d '{"nome":"Roberto Souza","cnh":"55544433322","categoria":"E"}'
+```
+
+Resultado esperado: HTTP 201 Created.
+
+### Teste 5 – Cadastrar manutenção
+
+```bash
+curl -i -X POST http://localhost:3222/api/v1/manutencoes \
+-H "X-API-KEY: binario-tech-secret-2026" \
+-H "Content-Type: application/json" \
+-d '{"placa":"XYZ-9876","descricao":"Revisao dos freios","valor":500}'
+```
+
+Resultado esperado: HTTP 201 Created.
+
+## 9. Exercícios de fixação
+
+### Exercício 01 – Testar o Middleware de Logging
+
+Comando:
+
+```bash
+curl -s http://localhost:3222/api/v1/health | jq .
+```
+
+Resultado esperado: a API retorna o status `ONLINE`.
+
+No terminal do servidor, o logger registra o método HTTP, a URL, o status da resposta e o tempo de execução.
+
+### Exercício 02 – Criar as rotas de manutenção
+
+Arquivo utilizado: `routes/manutencoes.js`.
+
+O código completo está na seção 5.2.
+
+As rotas implementadas são:
+
+- `GET /api/v1/manutencoes`: lista as manutenções.
+- `POST /api/v1/manutencoes`: cadastra uma manutenção.
+
+Teste:
+
+```bash
+curl -s \
+-H "X-API-KEY: binario-tech-secret-2026" \
 http://localhost:3222/api/v1/manutencoes | jq .
 ```
 
-**Explicação:** o `authMiddleware` verifica a chave de API antes de permitir o acesso às rotas de manutenções.
+Resultado esperado: lista das manutenções cadastradas.
 
----
+### Exercício 03 – Registrar o roteador de manutenções
 
-### Exercício 04 — Criar o Middleware de Validação da CNH
+Arquivo utilizado: `app.js`.
 
-**Objetivo:** aceitar somente CNHs com exatamente 11 dígitos numéricos.
+Código:
 
-Crie o arquivo:
+```javascript
+const manutencoesRouter = require('./routes/manutencoes');
 
-```bash
-nano middlewares/validaCnh.js
+app.use(
+    '/api/v1/manutencoes',
+    authMiddleware,
+    manutencoesRouter
+);
 ```
 
-Cole o código:
+Resultado esperado: as rotas de manutenção ficam protegidas pelo middleware de autenticação.
+
+Teste sem chave:
+
+```bash
+curl -i http://localhost:3222/api/v1/manutencoes
+```
+
+Resultado esperado: HTTP 401 Unauthorized.
+
+### Exercício 04 – Criar o middleware de validação de CNH
+
+Arquivo utilizado: `middlewares/validaCnh.js`.
+
+Código:
 
 ```javascript
 function validaCnh(req, res, next) {
@@ -1897,38 +1872,20 @@ function validaCnh(req, res, next) {
 module.exports = validaCnh;
 ```
 
-**Explicação:** a expressão regular `^\d{11}$` verifica se o valor contém exatamente 11 dígitos, sem letras ou espaços. O `next()` permite que a requisição continue quando a CNH é válida.
+Resultado esperado: o middleware aceita CNHs com 11 dígitos numéricos e rejeita valores inválidos.
 
----
+### Exercício 05 – Testar uma CNH inválida
 
-### Exercício 05 — Aplicar e Testar a Validação da CNH
-
-**Objetivo:** utilizar o middleware somente na rota POST de motoristas.
-
-No arquivo `routes/motoristas.js`, adicione:
-
-```javascript
-const validaCnh = require('../middlewares/validaCnh');
-```
-
-Localize a rota POST e altere sua declaração para:
-
-```javascript
-router.post('/', validaCnh, (req, res) => {
-```
-
-Mantenha o restante do código da rota, incluindo a validação dos campos obrigatórios.
-
-**Teste com CNH inválida:**
+Comando:
 
 ```bash
 curl -i -X POST http://localhost:3222/api/v1/motoristas \
 -H "X-API-KEY: binario-tech-secret-2026" \
 -H "Content-Type: application/json" \
--d '{"nome":"Roberto Souza","cnh":"123","categoria":"E"}'
+-d '{"nome":"Pedro","cnh":"123","categoria":"E"}'
 ```
 
-**Resultado esperado:**
+Resultado esperado:
 
 ```json
 {
@@ -1938,21 +1895,15 @@ curl -i -X POST http://localhost:3222/api/v1/motoristas \
 
 O status HTTP deve ser `400 Bad Request`.
 
-**Explicação:** como a CNH possui apenas três dígitos, o middleware interrompe o fluxo e não permite o cadastro.
+### Exercício 06 – Testar uma rota inexistente
 
----
-
-### Exercício 06 — Testar o Tratamento de Erro 404
-
-**Objetivo:** verificar a resposta da API ao acessar uma rota inexistente.
-
-Execute:
+Comando:
 
 ```bash
 curl -i http://localhost:3222/api/v1/clientes
 ```
 
-**Resultado esperado:**
+Resultado esperado:
 
 ```json
 {
@@ -1962,114 +1913,131 @@ curl -i http://localhost:3222/api/v1/clientes
 
 O status HTTP deve ser `404 Not Found`.
 
-**Explicação:** o middleware global de 404 responde quando nenhuma rota cadastrada corresponde ao endereço solicitado.
+### Exercício 07 – Criar o script de auditoria de segurança
 
----
+Criei o arquivo `teste_seguranca.sh` para realizar três tentativas sem chave e uma tentativa com chave válida.
 
-### Exercício 07 — Criar um Script de Teste de Segurança
-
-**Objetivo:** testar três acessos sem chave e um acesso com chave válida, salvando os resultados em um arquivo de auditoria.
-
-Crie o script:
+Para criar o arquivo:
 
 ```bash
 nano teste_seguranca.sh
 ```
 
-Cole o código:
+Código utilizado:
 
 ```bash
 #!/bin/bash
 
-BASE_URL="http://localhost:3222/api/v1/motoristas"
 LOG_FILE="audit_seguranca.log"
+URL="http://localhost:3222/api/v1/motoristas"
 API_KEY="binario-tech-secret-2026"
 
-echo "===== AUDITORIA DE SEGURANCA =====" > "$LOG_FILE"
+echo "=== AUDITORIA DE SEGURANCA ===" > "$LOG_FILE"
 echo "Data: $(date)" >> "$LOG_FILE"
 
-for i in 1 2 3
-do
-    echo "" >> "$LOG_FILE"
-    echo "Tentativa $i - Sem API Key" >> "$LOG_FILE"
+for tentativa in 1 2 3; do
+    echo "Tentativa $tentativa - Sem API Key" >> "$LOG_FILE"
 
-    curl -s -w "\nHTTP Status: %{http_code}\n" \
-        "$BASE_URL" >> "$LOG_FILE"
+    curl -s -o /dev/null \
+    -w "HTTP Status: %{http_code}\n" \
+    "$URL" >> "$LOG_FILE"
 done
 
-echo "" >> "$LOG_FILE"
 echo "Tentativa 4 - Com API Key valida" >> "$LOG_FILE"
 
-curl -s -w "\nHTTP Status: %{http_code}\n" \
-    -H "X-API-KEY: $API_KEY" \
-    "$BASE_URL" >> "$LOG_FILE"
+curl -s -o /dev/null \
+-w "HTTP Status: %{http_code}\n" \
+-H "X-API-KEY: $API_KEY" \
+"$URL" >> "$LOG_FILE"
 
-echo "" >> "$LOG_FILE"
-echo "Auditoria concluida." >> "$LOG_FILE"
-
-cat "$LOG_FILE"
+echo "Auditoria concluida."
 ```
 
-Salve e execute:
+Salvei o arquivo e dei permissão de execução:
 
 ```bash
 chmod +x teste_seguranca.sh
+```
+
+Executei o script:
+
+```bash
 ./teste_seguranca.sh
 ```
 
-Para consultar o arquivo posteriormente:
+Para visualizar o resultado:
 
 ```bash
 cat audit_seguranca.log
 ```
 
-**Resultado esperado:**
+Resultado esperado: três respostas HTTP 401 e uma resposta HTTP 200.
 
-- Tentativas 1, 2 e 3: HTTP `401`.
-- Tentativa 4: HTTP `200`.
+### Exercício 08 – Encontrar e encerrar o processo Node.js
 
-**Explicação:** o script automatiza os testes de autenticação e registra as respostas no arquivo `audit_seguranca.log`.
-
----
-
-### Exercício 08 — Localizar e Encerrar o Processo Node.js
-
-**Objetivo:** encontrar o processo da API e encerrá-lo.
-
-Primeiro, execute:
+Para localizar o processo da API, executei:
 
 ```bash
 ps aux | grep node
 ```
 
-Procure a linha que corresponde ao servidor `node app.js`. Identifique o PID, que é o número do processo.
-
-Encerre o processo usando o PID encontrado:
+Identifiquei o PID correspondente ao processo `node app.js` e encerrei o processo utilizando:
 
 ```bash
 kill -9 PID
 ```
 
-Substitua `PID` pelo número real. Por exemplo, se o PID for `1234`:
+Substituí `PID` pelo número real encontrado no terminal.
 
-```bash
-kill -9 1234
-```
-
-Verifique novamente:
+Depois, conferi novamente:
 
 ```bash
 ps aux | grep node
 ```
 
-**Explicação:** o comando `ps aux` lista os processos em execução, o `grep node` filtra os processos relacionados ao Node.js e o `kill -9` força o encerramento do processo escolhido.
+Resultado esperado: o processo selecionado é encerrado.
 
-Atenção: encerre somente o processo correspondente à sua API.
+## 10. Comandos úteis
 
----
+Verificar a versão do Node.js:
 
-## Conclusão
+```bash
+node -v
+```
 
-Nesta atividade, foram praticados os principais conceitos de middleware no Express: registro de logs, autenticação por API Key, validação de CNH, modularização de rotas, tratamento de erros HTTP e automação de testes com Bash.
+Verificar a versão do npm:
 
-Esses recursos contribuem para uma API mais organizada, segura e fácil de manter.
+```bash
+npm -v
+```
+
+Listar os arquivos da pasta:
+
+```bash
+ls
+```
+
+Visualizar o código do servidor:
+
+```bash
+cat app.js
+```
+
+Verificar se a API está respondendo:
+
+```bash
+curl -i http://localhost:3222/api/v1/health
+```
+
+## 11. Conclusão
+
+Com esta aula, aprendi como funcionam os middlewares no Express e como utilizá-los para registrar requisições, proteger rotas e validar dados.
+
+Também pratiquei a modularização da API com `express.Router()`, a configuração do CORS e o tratamento de erros com respostas padronizadas em JSON.
+
+Por fim, utilizei cURL e Bash para testar os endpoints e automatizar verificações de segurança.
+
+**Observação:** os dados dos motoristas e das manutenções ficam armazenados em arrays na memória e são perdidos quando o servidor reinicia. A chave de API utilizada tem finalidade didática e não deve ser usada como segredo real em produção.
+
+http://localhost:3222/api/v1
+```
