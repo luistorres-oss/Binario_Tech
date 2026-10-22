@@ -1,0 +1,10 @@
+=== AUDITORIA DE SEGURANCA ===
+Data: qui 22 out 2026 10:23:47 -03
+Tentativa 1 - Sem API Key
+HTTP Status: 401
+Tentativa 2 - Sem API Key
+HTTP Status: 401
+Tentativa 3 - Sem API Key
+HTTP Status: 401
+Tentativa 4 - Com API Key valida
+HTTP Status: 200
